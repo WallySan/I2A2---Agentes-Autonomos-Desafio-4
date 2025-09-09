@@ -45,19 +45,19 @@ def populate_tables():
             0: 'matricula', 1: 'desc_situacao', 2: 'dias_de_ferias'
         }},
         'exterior.xlsx': {'table': 'exterior', 'columns_by_index': {
-            0: 'matricula', 1: 'valor', 2: 'observacao'
+            0: 'matricula', 1: 'valor', 2: 'observacao' # Re-adicionando a observação
         }},
         'estagio.xlsx': {'table': 'estagio', 'columns_by_index': {
             0: 'matricula', 1: 'titulo_do_cargo', 2: 'na_compra'
         }},
-        'base dias uteis.xlsx': {'table': 'base_dias_uteis', 'columns_by_index': {
+        'base dias uteis.xls': {'table': 'base_dias_uteis', 'columns_by_index': {
             0: 'sindicato', 1: 'dias_uteis'
         }},
         'base sindicato x valor.xlsx': {'table': 'base_sindicato_valor', 'columns_by_index': {
             0: 'estado', 1: 'valor', 2:'sindicato'
         }},
         'afastamentos.xlsx': {'table': 'afastamentos', 'columns_by_index': {
-            0: 'matricula', 1: 'desc_situacao', 2: 'observacao'
+            0: 'matricula', 1: 'desc_situacao', 2: 'observacao' # Re-adicionando a observação
         }},
         'aprendiz.xlsx': {'table': 'aprendiz', 'columns_by_index': {
             0: 'matricula', 1: 'titulo_do_cargo'
@@ -80,19 +80,18 @@ def populate_tables():
                 print(f"Processando arquivo: {file_name_original}")
                 
                 try:
-                    # CORREÇÃO: Tratar o caso específico de 'base dias uteis.xls'
-                    if file_name_lower == 'base dias uteis.xlsx':
-                        df = pd.read_excel(file_path, header=None, skiprows=1)
-                    else:
-                        df = pd.read_excel(file_path, header=None, skiprows=[0])
+                    # Lê a planilha, ignorando o cabeçalho original e definindo os novos nomes.
+                    # As colunas são selecionadas por índice para maior robustez.
+                    df = pd.read_excel(file_path, header=None, skiprows=[0])
                     
                     # Renomeia as colunas com base no mapeamento por índice.
                     df = df.rename(columns=columns_by_index)
                     
                     # Checa se o número de colunas está correto.
                     if len(df.columns) < len(columns_by_index):
-                        for i in range(len(df.columns), len(columns_by_index)):
-                            df[columns_by_index[i]] = None
+                         # Adiciona colunas que faltam com valor None
+                         for i in range(len(df.columns), len(columns_by_index)):
+                             df[columns_by_index[i]] = None
                     
                     # Seleciona apenas as colunas necessárias para a inserção.
                     df_to_insert = df[list(columns_by_index.values())]

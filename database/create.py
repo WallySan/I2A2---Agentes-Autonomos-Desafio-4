@@ -69,7 +69,7 @@ def create_tables():
         # Tabela: exterior
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS exterior (
-                cadastro TEXT,
+                matricula TEXT,
                 valor REAL,
                 observacao TEXT
             )
@@ -87,7 +87,7 @@ def create_tables():
         # Tabela: base_dias_uteis
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS base_dias_uteis (
-                sindicado TEXT,
+                sindicato TEXT,
                 dias_uteis INTEGER
             )
         ''')
@@ -96,7 +96,8 @@ def create_tables():
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS base_sindicato_valor (
                 estado TEXT,
-                valor TEXT
+                valor TEXT,
+                sindicato TEXT
             )
         ''')
         

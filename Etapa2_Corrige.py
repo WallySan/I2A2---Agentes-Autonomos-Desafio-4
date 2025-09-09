@@ -22,8 +22,6 @@ def populate_tables():
     Lê os arquivos de planilhas e popula as tabelas no banco de dados.
     """
     
-    # Mapeamento de nomes de arquivos (sem diferenciação de maiúsculas/minúsculas)
-    # para nomes de tabelas e mapeamento de índice de coluna para nome final da coluna.
     file_table_map = {
         'vr mensal 05.2025.xlsx': {'table': 'vr_mensal', 'columns_by_index': {
             0: 'matricula', 1: 'admissao', 2: 'sindicato_do_colaborador', 
@@ -50,7 +48,7 @@ def populate_tables():
         'estagio.xlsx': {'table': 'estagio', 'columns_by_index': {
             0: 'matricula', 1: 'titulo_do_cargo', 2: 'na_compra'
         }},
-        'base dias uteis.xlsx': {'table': 'base_dias_uteis', 'columns_by_index': {
+        'base dias uteis.xls': {'table': 'base_dias_uteis', 'columns_by_index': {
             0: 'sindicato', 1: 'dias_uteis'
         }},
         'base sindicato x valor.xlsx': {'table': 'base_sindicato_valor', 'columns_by_index': {
@@ -81,19 +79,14 @@ def populate_tables():
                 
                 try:
                     # CORREÇÃO: Tratar o caso específico de 'base dias uteis.xls'
-                    if file_name_lower == 'base dias uteis.xlsx':
-                        df = pd.read_excel(file_path, header=None, skiprows=1)
+                    if file_name_lower == 'base dias uteis.xls':
+                        # Ignora as duas primeiras linhas, pois a segunda é o cabeçalho real.
+                        df = pd.read_excel(file_path, header=1) # AQUI O AJUSTE FOI FEITO
                     else:
-                        df = pd.read_excel(file_path, header=None, skiprows=[0])
+                        df = pd.read_excel(file_path) # LER SEM ARGUMENTO PARA CABEÇALHO PADRÃO
                     
-                    # Renomeia as colunas com base no mapeamento por índice.
-                    df = df.rename(columns=columns_by_index)
-                    
-                    # Checa se o número de colunas está correto.
-                    if len(df.columns) < len(columns_by_index):
-                        for i in range(len(df.columns), len(columns_by_index)):
-                            df[columns_by_index[i]] = None
-                    
+                    df.columns = [clean_column_name(col) for col in df.columns]
+
                     # Seleciona apenas as colunas necessárias para a inserção.
                     df_to_insert = df[list(columns_by_index.values())]
                     
